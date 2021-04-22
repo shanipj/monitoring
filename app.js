@@ -3,9 +3,9 @@ const fetch = require('node-fetch');
 const url = 'https://api.tomorrow.io/v4/timelines?';
 
 const locations = [
-    { locationId: '60808cecfd319a0007cb7051', name: 'ORD' },
-    { locationId: '60808cecfd319a0007cb7051', name: 'JFK' },
-    { locationId: '60808cecfd319a0007cb7051', name: 'DFW' }
+    { locationId: '60809ca688a6a60007947ca2', name: 'ORD' },
+    { locationId: '60809ca688a6a60007947ca2', name: 'JFK' },
+    { locationId: '60809ca688a6a60007947ca2', name: 'DFW' }
 ];
 
 function checkTemperature() {
@@ -32,4 +32,4 @@ function checkTemperature() {
     })
 }
 checkTemperature();
-setInterval(checkTemperature, 5000);
+setInterval(checkTemperature, 900000);
