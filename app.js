@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 
 const url = 'https://api.tomorrow.io/v4/timelines?';
+const interval = 900000;
 
 const locations = [
     { locationId: '60809ca688a6a60007947ca2', name: 'ORD' },
@@ -19,17 +20,15 @@ function checkTemperature() {
         }))
         .then(res => res.json())
         .then(json => {
-            if(json.data && json.data.timelines){
-                if (json.data.timelines[0].intervals[0].values.temperature - json.data.timelines[0].intervals[1].values.temperature > 2) {
-                    console.log('Temperature drop of at least 2°C in '+ item.name + " at " + json.data.timelines[0].intervals[1].startTime)
-                } 
-                
-            }else{
-              console.log('API ERROR');  
-            }
+                let currentTemperature = json.data.timelines[0].intervals[0].values.temperature;
+                let nextTemperature = json.data.timelines[0].intervals[1].values.temperature;
+
+                if (currentTemperature - nextTemperature > 2) {
+                    console.log('Temperature drop of at least 2°C in '+ item.name + " at " + nextTemperature);
+                }
         })
         .catch(err => console.error('error:' + err));
     })
 }
 checkTemperature();
-setInterval(checkTemperature, 900000);
+setInterval(checkTemperature, interval);
