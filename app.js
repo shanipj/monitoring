@@ -1,32 +1,44 @@
 const fetch = require('node-fetch');
-const constants = require('./utils/constans');
+const constants = require('./utils/constants');
 
-const locations = [
-    { locationId: '60809ca688a6a60007947ca2', name: 'ORD' },
-    { locationId: '60809ca688a6a60007947ca2', name: 'JFK' },
-    { locationId: '60809ca688a6a60007947ca2', name: 'DFW' }
-];
+async function fetchLocations() {
+  try {
+    const res = await fetch(constants.locationsApi + new URLSearchParams({
+      apikey: constants.key
+    }));
+    const locationsData = await res.json();
+    const locationData = locationsData.data.locations
 
-function checkTemperature() {
-    locations.forEach((item) => {
-        fetch(constants.url + new URLSearchParams({
-            apikey: 'HVIwYjZHra24Ah3uihus6Oh5pYRh6fXQ',
-            location: item.locationId,
-            fields: 'temperature',
-            timesteps: '15m',
-            units: 'metric'
-        }))
-        .then(res => res.json())
-        .then(json => {
-                let currentTemperature = json.data.timelines[0].intervals[0].values.temperature;
-                let nextTemperature = json.data.timelines[0].intervals[1].values.temperature;
-
-                if (currentTemperature - nextTemperature > 2) {
-                    console.log('Temperature drop of at least 2°C in '+ item.name + " at " + nextTemperature);
-                }
-        })
-        .catch(err => console.error('error:' + err));
-    })
+    for (let item of locationData) {
+      let locationId = item.id;
+      fetchTemperature(locationId);
+    }
+  } catch (error) {
+    console.log('Api Error: ' + error);
+  }
 }
-checkTemperature();
-setInterval(checkTemperature, interval);
+async function fetchTemperature(locationId) {
+  try {
+    const resp = await fetch(constants.temperatureApi + new URLSearchParams({
+      apikey: constants.key,
+      location: locationId,
+      fields: 'temperature',
+      timesteps: '15m',
+      units: 'metric'
+      }))   
+    const tempData = await resp.json();
+
+    let currentTemperature = tempData.data.timelines[0].intervals[0].values.temperature;
+    let nextTemperature = tempData.data.timelines[0].intervals[1].values.temperature;
+
+    if (currentTemperature - nextTemperature > 2) {
+      console.log('Temperature drop of at least 2°C in ' + item.name + " at " + nextTemperature);
+    }else{
+      console.log( 'currentTemperature: '+ currentTemperature + 'nextTemperature: ' +nextTemperature)
+    }
+  } catch (error) {
+    console.log('Api Error: ' + error);
+  }
+}
+
+fetchLocations();
