@@ -1,7 +1,5 @@
 const fetch = require('node-fetch');
-
-const url = 'https://api.tomorrow.io/v4/timelines?';
-const interval = 900000;
+const constants = require('./utils/constans');
 
 const locations = [
     { locationId: '60809ca688a6a60007947ca2', name: 'ORD' },
@@ -11,7 +9,7 @@ const locations = [
 
 function checkTemperature() {
     locations.forEach((item) => {
-        fetch(url + new URLSearchParams({
+        fetch(constants.url + new URLSearchParams({
             apikey: 'HVIwYjZHra24Ah3uihus6Oh5pYRh6fXQ',
             location: item.locationId,
             fields: 'temperature',
